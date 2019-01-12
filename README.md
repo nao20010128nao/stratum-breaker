@@ -16,7 +16,8 @@ const b = new Breaker({
     port: 3000,
     minerName: 'Test',
     user: 'username',
-    pass: 'password'
+    pass: 'password',
+    createSocket: () => {...}
 });
 
 b.on('ready', () => {

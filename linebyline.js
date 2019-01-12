@@ -7,7 +7,7 @@ module.exports = class LineByLine extends EE {
         super();
         this.opts = opts;
 
-        this.socket = new net.Socket();
+        this.socket = opts.createSocket ? opts.createSocket() : new net.Socket();
         this.socket.setNoDelay(true);
         this.socket.setKeepAlive(true, 120);
 
@@ -56,7 +56,7 @@ module.exports = class LineByLine extends EE {
 
     disconnect() {
         const self = this;
-        
+
         return new Promise(function (resolve) {
             self.socket.end(function () {
                 resolve(self);

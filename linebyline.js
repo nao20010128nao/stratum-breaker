@@ -50,7 +50,16 @@ module.exports = class LineByLine extends EE {
         return new Promise(function (resolve) {
             self.socket.connect(self.opts, function () {
                 resolve(self);
-                self.emit('connected');
+            });
+        });
+    }
+
+    disconnect() {
+        const self = this;
+        
+        return new Promise(function (resolve) {
+            self.socket.end(function () {
+                resolve(self);
             });
         });
     }

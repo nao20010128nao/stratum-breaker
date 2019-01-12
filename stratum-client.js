@@ -33,6 +33,7 @@ module.exports = class StratumClient extends LBL {
         });
 
         self.on('mining.subscribe', (result) => {
+            console.log('subscribe');
             const [subscription, extraNonce1, extraNonce2Size] = result;
             self.subscription = subscription;
             self.extraNonce1 = extraNonce1;
@@ -45,11 +46,13 @@ module.exports = class StratumClient extends LBL {
             if (data.id) {
                 this.pending[data.id] = data.method;
             }
-            return this.send(JSON.stringify(data) + "\n");
+            this.send(JSON.stringify(data) + "\n")
+                .then(() => {})
+                .catch(error => {
+                    this.emit("error", error);
+                });
         } else {
-            var error = new Error(Client.debug(Server.errors.UNAUTHORIZED_WORKER));
-            this.emit("error", error);
-            return Promise.reject(error);
+            this.emit("error", "Unauthorized worker");
         }
     }
 

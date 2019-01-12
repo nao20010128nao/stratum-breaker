@@ -20,10 +20,8 @@ module.exports = class StratumBreaker extends Client {
             self.running = false;
         });
 
-        self.connect().then(() => {
+        self.on("ready", () => {
             self.ready = true;
-        }, () => {
-            self.ready = false;
         });
     }
 
@@ -36,9 +34,11 @@ module.exports = class StratumBreaker extends Client {
             this.stratumSubscribe(this.opts.minerName);
             this.stratumAuthorize(this.opts.user, this.opts.pass);
             this.running = true;
-            this.once('mining.notify', (jobId, $, $$, $$$, $$$$, $$$$$, nTime) => {
+            this.on('mining.notify', ([jobId, $, $$, $$$, $$$$, $$$$$, nTime]) => {
                 this.jobId = jobId;
-                this.nTime = nTime || Math.floor(new Date() / 1000);
+                this.nTime = nTime;
+            });
+            this.once('mining.notify', () => {
                 setImmediate(this.sendRandomShareBatch.bind(this));
             });
         }
@@ -46,13 +46,14 @@ module.exports = class StratumBreaker extends Client {
 
     stop() {
         this.running = false;
+        return this.disconnect();
     }
 
     sendRandomShareBatch() {
         if (!this.running) {
             return;
         }
-        const extraNonce2 = random.sync(this.extraNonce2Size).toString('hex');
+        const extraNonce2 = random.sync(this.extraNonce2Size || 4).toString('hex');
         const nonce = random.sync(4).toString('hex');
         this.stratumSubmit(this.opts.user, this.jobId, extraNonce2, this.nTime, nonce);
         this.emit('share', this.opts.user, this.jobId, extraNonce2, this.nTime, nonce);

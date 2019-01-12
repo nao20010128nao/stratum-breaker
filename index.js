@@ -20,7 +20,7 @@ module.exports = class StratumBreaker extends Client {
             self.running = false;
         });
 
-        self.on("ready", () => {
+        self.on("connect", () => {
             self.ready = true;
         });
     }

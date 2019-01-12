@@ -8,9 +8,8 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "@nao20010128nao/stratum": "^1.0.0",
     "random-bytes": "^1.0.0"
   }
 }
